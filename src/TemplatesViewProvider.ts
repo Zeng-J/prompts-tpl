@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as fs from "fs";
 import { getNonce } from "./utils";
 
 export default class TemplatesViewProvider
@@ -24,19 +25,28 @@ export default class TemplatesViewProvider
       // Allow scripts in the webview
       enableScripts: true,
 
-      localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "webview-ui/dist")],
+      localResourceRoots: [
+        vscode.Uri.joinPath(this._extensionUri, "webview-ui/dist"),
+      ],
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage((data) => {
-      console.log(data);
       switch (data.type) {
         case "save": {
           this._extensionContext.globalState.update(
             "templates",
             data.data.templates
           );
+          break;
+        }
+        case "export": {
+          this.exportJson();
+          break;
+        }
+        case "copy": {
+          this.copyText(data.data);
           break;
         }
       }
@@ -85,9 +95,14 @@ export default class TemplatesViewProvider
     `;
   }
 
-  async selectTemplate() {
+  getTemplates() {
     const templates = (this._extensionContext.globalState.get("templates") ||
-      []) as { title: string; content: string }[];
+      []) as { id: string; title: string; content: string }[];
+    return templates;
+  }
+
+  async selectTemplate() {
+    const templates = this.getTemplates();
     const items: vscode.QuickPickItem[] = templates.map((item) => ({
       label: item.title,
       description: item.content,
@@ -101,9 +116,6 @@ export default class TemplatesViewProvider
         // 获取用户选择的文本
         const selection = editor.selection;
         selectedText = editor.document.getText(selection);
-
-        // 打印用户选择的文本
-        console.log(selectedText);
       }
       const result =
         selected.description?.replace(/\$selection\$/g, selectedText) || "";
@@ -113,6 +125,39 @@ export default class TemplatesViewProvider
       } catch (_) {
         vscode.window.showInformationMessage("粘贴失败");
       }
+    }
+  }
+
+  exportJson() {
+    const templates = this.getTemplates();
+    const json = JSON.stringify(templates, null, 2);
+    vscode.window
+      .showSaveDialog({
+        defaultUri: vscode.Uri.file("promptstpl.json"),
+        filters: { json: ["json"] },
+      })
+      .then((uri) => {
+        if (uri) {
+          fs.writeFile(uri.fsPath, json, (err) => {
+            if (err) {
+              vscode.window.showErrorMessage(
+                `Failed to export data: ${err.message}`
+              );
+            } else {
+              vscode.window.showInformationMessage(
+                `Data exported to ${uri.fsPath}`
+              );
+            }
+          });
+        }
+      });
+  }
+
+  async copyText(txt: string) {
+    try {
+      await vscode.env.clipboard.writeText(txt);
+    } catch (_) {
+      vscode.window.showInformationMessage("粘贴失败");
     }
   }
 }

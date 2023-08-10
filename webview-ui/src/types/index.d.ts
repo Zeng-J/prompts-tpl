@@ -1,3 +1,4 @@
+import type { SVGProps } from "react";
 import { Type } from "../enums";
 
 export type IRoute =
@@ -16,4 +17,8 @@ export interface ITemplateItem {
   id: string;
   title: string;
   content: string;
+}
+
+export interface IIconSvgProps extends SVGProps<SVGSVGElement> {
+  disabledDefaultClass?: boolean;
 }

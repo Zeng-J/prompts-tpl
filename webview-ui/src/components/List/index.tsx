@@ -1,7 +1,10 @@
-import { useState, memo } from "react";
-import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
+import { useState, useEffect, useRef, memo } from "react";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import type { OnDragEndResponder } from "react-beautiful-dnd";
+import CopyOutlined from "../../icons/CopyOutlined";
+import EditOutlined from "../../icons/EditOutlined";
+import CheckOutlined from "../../icons/CheckOutlined";
 import { Type } from "../../enums";
 import { IChangeState, ITemplateItem } from "../../types";
 import { vscode } from "../../utils/vscode";
@@ -28,6 +31,20 @@ function ListItem({
   index: number;
   changeRoute: IChangeState;
 }) {
+  const [isCopied, setIsCopied] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    if (isCopied) {
+      timerRef.current = setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
+
+    return () => {
+      clearTimeout(timerRef.current);
+    };
+  }, [isCopied]);
   return (
     <Draggable draggableId={data.id} index={index}>
       {(provided) => {
@@ -40,16 +57,39 @@ function ListItem({
           >
             <div className={s.list_item_header}>
               <div className={s.list_item_title}>{data.title}</div>
-              <VSCodeLink
+              <VSCodeButton
+                onClick={() => {
+                  if (!isCopied) {
+                    vscode.postMessage({ type: "copy", data: data.content });
+                    setIsCopied(true);
+                  }
+                }}
+                appearance="icon"
+                aria-label="copy"
+                disabled={isCopied}
+              >
+                <CopyOutlined
+                  style={{ display: isCopied ? "none" : "inline-block" }}
+                />
+                <CheckOutlined
+                  style={{
+                    display: isCopied ? "inline-block" : "none",
+                    color: "#0969da",
+                  }}
+                />
+              </VSCodeButton>
+              <VSCodeButton
                 onClick={() => {
                   changeRoute({
                     type: Type.update,
                     id: data.id,
                   });
                 }}
+                appearance="icon"
+                aria-label="edit"
               >
-                编辑
-              </VSCodeLink>
+                <EditOutlined />
+              </VSCodeButton>
             </div>
             <div className={s.list_item_content}>{data.content}</div>
           </div>
@@ -67,11 +107,16 @@ const ListCom = memo(function ListComp({
   changeRoute: IChangeState;
 }) {
   if (dataSource.length <= 0) {
-    return <div className={s.list_empty}>您暂无模板，请创建一个吧～</div>
+    return <div className={s.list_empty}>您暂无模板，请创建一个吧～</div>;
   }
 
   return dataSource.map((item, index: number) => (
-    <ListItem changeRoute={changeRoute} data={item} index={index} key={item.id} />
+    <ListItem
+      changeRoute={changeRoute}
+      data={item}
+      index={index}
+      key={item.id}
+    />
   ));
 });
 
@@ -122,6 +167,12 @@ export default function List({ changeRoute }: ListProps) {
       </DragDropContext>
       <VSCodeButton onClick={() => changeRoute({ type: Type.add })}>
         新增模板
+      </VSCodeButton>
+      <VSCodeButton
+        style={{ marginLeft: 12 }}
+        onClick={() => vscode.postMessage({ type: "export" })}
+      >
+        导出数据
       </VSCodeButton>
     </div>
   );
