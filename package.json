@@ -6,6 +6,12 @@
   "engines": {
     "vscode": "^1.81.0"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zeng-J/prompts-tpl.git"
+  },
+  "homepage": "https://github.com/Zeng-J/prompts-tpl",
   "categories": [
     "Other"
   ],

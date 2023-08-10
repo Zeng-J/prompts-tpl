@@ -125,7 +125,7 @@ $selection$
           />
           {errors.content && <div className={s.form_item_error}>必须填写</div>}
           <p className={s.form_item_help}>
-            选中内容的占位符请使用：
+            如有需要选中内容的占位符请使用：
             <span className={s.form_item_tag}>$selection$</span>。到时会自动替换
           </p>
         </section>

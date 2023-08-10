@@ -34,3 +34,4 @@ vsc-extension-quickstart.md
 **/yarn.lock
 **/*.map
 **/*.ts
+images/**
