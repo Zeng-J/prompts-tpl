@@ -19,7 +19,8 @@
 
 ## 安装
 
-可前往 vscode 插件 搜索 **promptstpl**
+- 可前往 vscode 插件 搜索 **promptstpl**
+- 前往安装网页[https://marketplace.visualstudio.com/items?itemName=zengjie.promptstpl](https://marketplace.visualstudio.com/items?itemName=zengjie.promptstpl)
 
 ## bug
 
