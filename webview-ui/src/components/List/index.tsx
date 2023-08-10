@@ -148,32 +148,62 @@ export default function List({ changeRoute }: ListProps) {
     setList(newList);
   };
 
+  useEffect(() => {
+    // vscode不同项目的webview的数据时不共享的，所以要获取插件globalState数据同步一下
+    vscode.postMessage({ type: "init" });
+    const onMessage = (event: WindowEventMap["message"]) => {
+      const message = event.data;
+      if (message.type === "init") {
+        setList(message.data);
+        vscode.setState({ templates: message.data });
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => {
+      window.removeEventListener("message", onMessage);
+    };
+  }, []);
+
   return (
-    <div className={s.container}>
-      <h1 className={s.title}>模板列表</h1>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="list">
-          {(provided) => (
-            <div
-              className={s.list}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              <ListCom dataSource={list} changeRoute={changeRoute} />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <VSCodeButton onClick={() => changeRoute({ type: Type.add })}>
-        新增模板
-      </VSCodeButton>
-      <VSCodeButton
-        style={{ marginLeft: 12 }}
-        onClick={() => vscode.postMessage({ type: "export" })}
-      >
-        导出数据
-      </VSCodeButton>
+    <div className={s.wrapper}>
+      <main className={s.container}>
+        <h1 className={s.title}>模板列表</h1>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <div
+                className={s.list}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <ListCom dataSource={list} changeRoute={changeRoute} />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <VSCodeButton onClick={() => changeRoute({ type: Type.add })}>
+          新增模板
+        </VSCodeButton>
+        <VSCodeButton
+          style={{ marginLeft: 12 }}
+          onClick={() => vscode.postMessage({ type: "export" })}
+        >
+          导出数据
+        </VSCodeButton>
+      </main>
+      <footer className={s.footer}>
+        <p className={s.help}>
+          vscode不同项目下的该页面数据是不同步的，如果其他项目编辑了模板，当前项目页面没有显示最新数据时，请点击下方按钮同步（当然也可以关闭项目，下次进来就是最新的）。
+        </p>
+        <VSCodeButton
+          onClick={() => {
+            vscode.postMessage({ type: "init" });
+          }}
+        >
+          同步数据
+        </VSCodeButton>
+      </footer>
     </div>
   );
 }

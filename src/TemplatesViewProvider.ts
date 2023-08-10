@@ -49,6 +49,10 @@ export default class TemplatesViewProvider
           this.copyText(data.data);
           break;
         }
+        case "init": {
+          this._sendTemplates();
+          break;
+        }
       }
     });
   }
@@ -93,6 +97,14 @@ export default class TemplatesViewProvider
         </body>
       </html>
     `;
+  }
+
+  private _sendTemplates() {
+    const templates = this.getTemplates();
+    this._view?.webview.postMessage({
+      type: "init",
+      data: templates,
+    });
   }
 
   getTemplates() {

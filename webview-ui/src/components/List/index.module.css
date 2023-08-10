@@ -1,4 +1,11 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .container {
+  flex: 1;
   padding: 20px;
 }
 
@@ -47,4 +54,13 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.footer {
+  padding: 20px;
+}
+
+.help {
+  color: #828b94;
+  margin-bottom: 8px;
 }
