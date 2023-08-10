@@ -1,6 +1,6 @@
 # promptstpl README
 
-This is the README for your extension "promptstpl". After writing up a brief description, we recommend including the following sections.
+提示模板插件
 
 ## Features
 

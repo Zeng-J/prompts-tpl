@@ -12,11 +12,17 @@
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.4",
+    "sweetalert2": "^11.7.20",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
+    "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^18.2.7",
+    "@types/uuid": "^9.0.2",
     "@types/vscode-webview": "^1.57.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

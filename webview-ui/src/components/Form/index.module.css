@@ -1,0 +1,43 @@
+.container {
+  padding: 20px;
+}
+
+.title {
+  padding: 6px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+}
+
+.form_item {
+  margin-bottom: 12px;
+}
+
+.form_item_label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #1f242e;
+}
+
+.form_item_error {
+  margin-top: 4px;
+  color: #ff4c38;
+}
+
+.form_item_help {
+  margin-top: 8px;
+  color: #828b94;
+}
+
+.form_item_tag {
+  padding: 4px;
+  background: #f7f8fd;
+}
+
+.input {
+  width: 100%;
+  max-width: 920px;
+}
+
+.btn {
+  margin: 12px;
+}

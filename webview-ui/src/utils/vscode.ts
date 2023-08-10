@@ -1,4 +1,5 @@
 import type { WebviewApi } from "vscode-webview";
+import type { ITemplateItem } from "../types";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables
@@ -9,7 +10,7 @@ import type { WebviewApi } from "vscode-webview";
  * dev server by using native web browser features that mock the functionality
  * enabled by acquireVsCodeApi.
  */
-class VSCodeAPIWrapper {
+class VSCodeAPIWrapper<T> {
   private readonly vsCodeApi: WebviewApi<unknown> | undefined;
 
   constructor() {
@@ -44,9 +45,9 @@ class VSCodeAPIWrapper {
    *
    * @return The current state or `undefined` if no state has been set.
    */
-  public getState(): unknown | undefined {
+  public getState(): T | undefined {
     if (this.vsCodeApi) {
-      return this.vsCodeApi.getState();
+      return this.vsCodeApi.getState() as T | undefined;
     } else {
       const state = localStorage.getItem("vscodeState");
       return state ? JSON.parse(state) : undefined;
@@ -64,7 +65,7 @@ class VSCodeAPIWrapper {
    *
    * @return The new state.
    */
-  public setState<T extends unknown | undefined>(newState: T): T {
+  public setState(newState: T): T {
     if (this.vsCodeApi) {
       return this.vsCodeApi.setState(newState);
     } else {
@@ -72,7 +73,17 @@ class VSCodeAPIWrapper {
       return newState;
     }
   }
+
+  public setStateAndSendMessage(newState: T, message: { type: "save" }) {
+    this.setState(newState);
+    this.postMessage({
+      ...message,
+      data: newState,
+    });
+  }
 }
 
 // Exports class singleton to prevent multiple invocations of acquireVsCodeApi.
-export const vscode = new VSCodeAPIWrapper();
+export const vscode = new VSCodeAPIWrapper<{
+  templates: ITemplateItem[];
+}>();
