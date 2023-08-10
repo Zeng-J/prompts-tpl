@@ -2,7 +2,7 @@
   "name": "promptstpl",
   "displayName": "promptsTpl",
   "description": "自定义提示词模板",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.71.0"
   },

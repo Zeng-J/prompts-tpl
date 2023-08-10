@@ -1,9 +1,8 @@
-# Change Log
+## v0.1.2 2023-08-10 by zj
 
-All notable changes to the "promptstpl" extension will be documented in this file.
+- 降低 vscode 版本要求
+- fix: 不同项目的 webview 数据不同步
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## v0.1.1 2023-08-10 by zj
 
-## [Unreleased]
-
-- Initial release
+- 初版
